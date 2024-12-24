@@ -1,14 +1,19 @@
 // Phaser 게임 설정
 const config = {
     type: Phaser.AUTO,
-    width: 1000,
-    height: 800,
+    width: window.innerWidth, // 초기 화면 너비를 창 너비로 설정
+    height: window.innerHeight, // 초기 화면 높이를 창 높이로 설정
+    scale: {
+        mode: Phaser.Scale.RESIZE, // 화면 크기가 변경되면 자동으로 조정
+        autoCenter: Phaser.Scale.CENTER_BOTH, // 화면 중앙 정렬
+    },
     scene: {
         preload,
         create,
         update,
     },
 };
+  
   
 // 리소스 로드
 function preload() {
