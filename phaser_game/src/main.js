@@ -31,6 +31,18 @@ function create() {
     background.setScale(1);
     const logo = this.add.image(400, 300, 'player'); // x=400, y=300에 이미지 추가
     logo.setScale(0.2); // 이미지 크기를 50%로 조정
+
+    // 전체 화면 버튼 추가
+    const fullscreenButton = this.add.text(10, 10, 'Full Screen', { font: '20px Arial', fill: '#ffffff' })
+        .setInteractive()
+        .on('pointerdown', () => {
+            
+        if (this.scale.isFullscreen) {
+            this.scale.stopFullscreen(); // 전체 화면 종료
+        } else {
+            this.scale.startFullscreen(); // 전체 화면 시작
+        }
+    });
 }
 
 // 게임 루프
