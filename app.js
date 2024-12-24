@@ -18,6 +18,8 @@ app.use(cors());
 
 // 'public' 폴더에 있는 정적 파일 제공
 app.use(express.static(path.join(__dirname, 'public')));
+// 'phaser_game' 폴더에 있는 정적 파일 제공
+app.use(express.static(path.join(__dirname, 'phaser_game')));
 
 // 'uploads' 폴더를 정적 파일 제공 폴더로 설정
 //app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -37,6 +39,10 @@ app.get('/mainpage', (req, res) => {
 
 app.get('/albertcamus/thestranger', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/html/thestrangerpage.html'));
+});
+
+app.get('/sample', (req, res) => {
+    res.sendFile(path.join(__dirname, 'phaser_game/gamelist/index.html'));
 });
 
 // 등록되지 않은 패스에 대해 페이지 오류 응답 
