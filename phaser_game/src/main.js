@@ -33,15 +33,28 @@ const config = {
   }
   
   function create() {
+
+    const mapWidth = window.innerWidth*2; // 맵의 너비
+    const mapHeight = window.innerHeight*2; // 맵의 높이
+
     // 배경 설정
-    const background = this.add.sprite(0, 0, 'background').setOrigin(0, 0);
-    background.setDisplaySize(window.innerWidth, window.innerHeight);
-  
-    // 플레이어 추가
-    player = this.physics.add.sprite(400, 300, 'player', 0); // 초기 프레임 설정
+    const background = this.add.tileSprite(0, 0, mapWidth, mapHeight, 'background').setOrigin(0, 0);
+
+
+    //월드 경계 확장
+    this.physics.world.setBounds(0, 0, mapWidth, mapHeight);
+    // 플레이어 설정
+    const centerX = mapWidth / 2; // 맵 중앙 X 좌표
+    const centerY = mapHeight / 2; // 맵 중앙 Y 좌표
+    player = this.physics.add.sprite(centerX, centerY, 'player', 0); // 맵 중앙에서 시작
     player.setScale(2); // 크기 확대
     player.setCollideWorldBounds(true); // 경계 제한
   
+
+    // 카메라 설정
+    this.cameras.main.startFollow(player); // 플레이어를 따라다니는 카메라
+    this.cameras.main.setBounds(0, 0, mapWidth, mapHeight); // 카메라가 이동할 수 있는 맵 경계
+
     // 화살표 키 입력 추가
     cursors = this.input.keyboard.createCursorKeys();
   
