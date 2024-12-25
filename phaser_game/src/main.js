@@ -10,7 +10,7 @@ const config = {
       default: 'arcade', // 물리 엔진 활성화
       arcade: {
         gravity: { y: 0 }, // 중력 없음
-        debug: false, // 디버그 비활성화
+        debug: false,
       },
     },
     scene: {
@@ -22,22 +22,27 @@ const config = {
   
   let player; // 플레이어 변수
   let cursors; // 키 입력 변수
+  let currentDirection = 'down'; // 현재 방향을 추적 (기본값: 아래)
   
   function preload() {
-    this.load.image('player', '../assets/images/sample.png'); // 캐릭터 이미지
     this.load.image('background', '../assets/images/background.jpg'); // 배경 이미지
+    this.load.spritesheet('player', '../assets/images/player.png', {
+      frameWidth: 32, // 각 프레임의 너비
+      frameHeight: 48, // 각 프레임의 높이
+    });
   }
   
   function create() {
-    // 배경 이미지 추가 및 크기 조정
+    // 배경 설정
     const background = this.add.sprite(0, 0, 'background').setOrigin(0, 0);
-    background.setDisplaySize(window.innerWidth, window.innerHeight); // 화면 크기에 맞게 배경 조정
+    background.setDisplaySize(window.innerWidth, window.innerHeight);
   
-    // 플레이어 캐릭터 추가 및 초기 위치 설정
-    player = this.physics.add.sprite(400, 300, 'player').setScale(0.2);
-    player.setCollideWorldBounds(true); // 화면 밖으로 나가지 않도록 설정
+    // 플레이어 추가
+    player = this.physics.add.sprite(400, 300, 'player', 0); // 초기 프레임 설정
+    player.setScale(2); // 크기 확대
+    player.setCollideWorldBounds(true); // 경계 제한
   
-    // 키 입력 설정
+    // 화살표 키 입력 추가
     cursors = this.input.keyboard.createCursorKeys();
   
     // Full Screen 버튼 생성
@@ -59,23 +64,76 @@ const config = {
     this.scale.on('leavefullscreen', () => {
       fullscreenButton.setVisible(true); // 전체 화면 종료 시 버튼 표시
     });
+
+
+    // 애니메이션 생성
+    this.anims.create({
+      key: 'walk-left', // 왼쪽 걷기
+      frames: this.anims.generateFrameNumbers('player', { start: 9, end: 11 }),
+      frameRate: 10,
+      repeat: -1,
+    });
+  
+    this.anims.create({
+      key: 'walk-right', // 오른쪽 걷기
+      frames: this.anims.generateFrameNumbers('player', { start: 6, end: 8 }),
+      frameRate: 10,
+      repeat: -1,
+    });
+  
+    this.anims.create({
+      key: 'walk-up', // 위로 걷기
+      frames: this.anims.generateFrameNumbers('player', { start: 3, end: 5 }),
+      frameRate: 10,
+      repeat: -1,
+    });
+  
+    this.anims.create({
+      key: 'walk-down', // 아래로 걷기
+      frames: this.anims.generateFrameNumbers('player', { start: 0, end: 2 }),
+      frameRate: 10,
+      repeat: -1,
+    });
   }
   
   function update() {
-    // 플레이어 이동 속도 초기화
+    // 속도 초기화
     player.setVelocity(0);
   
-    // 화살표 키 입력에 따른 속도 설정
+    // 키 입력에 따라 이동 및 애니메이션 실행
     if (cursors.left.isDown) {
-      player.setVelocityX(-400); // 왼쪽 이동
+      player.setVelocityX(-200); // 왼쪽으로 이동
+      player.anims.play('walk-left', true); // 걷기 애니메이션 실행
+      currentDirection = 'left'; // 현재 방향 업데이트
     } else if (cursors.right.isDown) {
-      player.setVelocityX(400); // 오른쪽 이동
-    }
-  
-    if (cursors.up.isDown) {
-      player.setVelocityY(-400); // 위로 이동
+      player.setVelocityX(200); // 오른쪽으로 이동
+      player.anims.play('walk-right', true);
+      currentDirection = 'right';
+    } else if (cursors.up.isDown) {
+      player.setVelocityY(-200); // 위로 이동
+      player.anims.play('walk-up', true);
+      currentDirection = 'up';
     } else if (cursors.down.isDown) {
-      player.setVelocityY(400); // 아래로 이동
+      player.setVelocityY(200); // 아래로 이동
+      player.anims.play('walk-down', true);
+      currentDirection = 'down';
+    } else {
+      // 키 입력이 없을 때 애니메이션 정지 및 기본 정지 프레임 설정
+      player.anims.stop();
+      switch (currentDirection) {
+        case 'left':
+          player.setFrame(9); // 왼쪽 정지 프레임
+          break;
+        case 'right':
+          player.setFrame(6); // 오른쪽 정지 프레임
+          break;
+        case 'up':
+          player.setFrame(3); // 위쪽 정지 프레임
+          break;
+        case 'down':
+          player.setFrame(0); // 아래쪽 정지 프레임
+          break;
+      }
     }
   }
   
