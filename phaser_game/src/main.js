@@ -67,15 +67,15 @@ const config = {
   
     // 화살표 키 입력에 따른 속도 설정
     if (cursors.left.isDown) {
-      player.setVelocityX(-200); // 왼쪽 이동
+      player.setVelocityX(-400); // 왼쪽 이동
     } else if (cursors.right.isDown) {
-      player.setVelocityX(200); // 오른쪽 이동
+      player.setVelocityX(400); // 오른쪽 이동
     }
   
     if (cursors.up.isDown) {
-      player.setVelocityY(-200); // 위로 이동
+      player.setVelocityY(-400); // 위로 이동
     } else if (cursors.down.isDown) {
-      player.setVelocityY(200); // 아래로 이동
+      player.setVelocityY(400); // 아래로 이동
     }
   }
   
