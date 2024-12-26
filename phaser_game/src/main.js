@@ -25,7 +25,11 @@ const config = {
   let currentDirection = 'down'; // 현재 방향을 추적 (기본값: 아래)
   
   function preload() {
-    this.load.image('background', '../assets/images/background.jpg'); // 배경 이미지
+
+    // 배경 음악 로드
+    this.load.audio('bgMusic', '../assets/audio/samplemp3.mp3');
+    // 배경 이미지
+    this.load.image('background', '../assets/images/background.jpg'); 
     this.load.spritesheet('player', '../assets/images/player.png', {
       frameWidth: 32, // 각 프레임의 너비
       frameHeight: 48, // 각 프레임의 높이
@@ -54,6 +58,14 @@ const config = {
     // 카메라 설정
     this.cameras.main.startFollow(player); // 플레이어를 따라다니는 카메라
     this.cameras.main.setBounds(0, 0, mapWidth, mapHeight); // 카메라가 이동할 수 있는 맵 경계
+
+
+    // 배경 음악 재생
+    const bgMusic = this.sound.add('bgMusic', {
+        volume: 0.5, // 음악 볼륨 (0.0 ~ 1.0)
+        loop: true,  // 반복 재생
+    });
+    bgMusic.play();
 
     // 화살표 키 입력 추가
     cursors = this.input.keyboard.createCursorKeys();
