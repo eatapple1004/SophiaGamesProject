@@ -67,7 +67,7 @@ const config = {
         } else {
           this.scale.startFullscreen(); // 전체 화면 시작
         }
-      });
+      }).setScrollFactor(0);;
   
     // 전체 화면 상태 감지
     this.scale.on('enterfullscreen', () => {
