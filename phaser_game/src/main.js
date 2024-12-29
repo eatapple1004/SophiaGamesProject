@@ -59,6 +59,20 @@ const config = {
     this.cameras.main.startFollow(player); // 플레이어를 따라다니는 카메라
     this.cameras.main.setBounds(0, 0, mapWidth, mapHeight); // 카메라가 이동할 수 있는 맵 경계
 
+    // 설정 텍스트 버튼 추가
+    const settingsButton = this.add.text(window.innerWidth - 150, 10, '⚙ Settings', {
+        font: '20px Arial',
+        fill: '#000',
+        padding: { x: 10, y: 5 },
+    })
+        .setInteractive()
+        .setScrollFactor(0) // 화면 고정
+        .setOrigin(0);
+  
+    // 클릭 이벤트
+    settingsButton.on('pointerdown', () => {
+        console.log('Settings button clicked');
+    });
 
     // 배경 음악 재생
     const bgMusic = this.sound.add('bgMusic', {
