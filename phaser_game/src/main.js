@@ -24,6 +24,9 @@ const config = {
   let cursors; // 키 입력 변수
   let currentDirection = 'down'; // 현재 방향을 추적 (기본값: 아래)
   let bgMusic; // 전역 변수로 선언
+  let volumeBar; // 볼륨 바
+  let volumeBarBackground; // 볼륨 바 배경
+
   function preload() {
 
     // 배경 음악 로드
