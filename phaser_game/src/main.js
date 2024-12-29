@@ -23,7 +23,7 @@ const config = {
   let player; // 플레이어 변수
   let cursors; // 키 입력 변수
   let currentDirection = 'down'; // 현재 방향을 추적 (기본값: 아래)
-  
+  let bgMusic; // 전역 변수로 선언
   function preload() {
 
     // 배경 음악 로드
@@ -72,10 +72,11 @@ const config = {
     // 클릭 이벤트
     settingsButton.on('pointerdown', () => {
         console.log('Settings button clicked');
+        openSettingsMenu(this); // 설정 메뉴 열기
     });
 
     // 배경 음악 재생
-    const bgMusic = this.sound.add('bgMusic', {
+    bgMusic = this.sound.add('bgMusic', {
         volume: 0.5, // 음악 볼륨 (0.0 ~ 1.0)
         loop: true,  // 반복 재생
     });
@@ -133,6 +134,94 @@ const config = {
       frameRate: 10,
       repeat: -1,
     });
+  }
+  
+  function openSettingsMenu(scene) {
+    // 설정 메뉴 배경
+    const menuBackground = scene.add.rectangle(
+      window.innerWidth / 2,
+      window.innerHeight / 2,
+      300,
+      200,
+      0x000000,
+      0.8
+    )
+      .setScrollFactor(0) // 화면 고정
+      .setOrigin(0.5); // 중심에 배치
+  
+    // 설정 메뉴 닫기 버튼
+    const closeButton = scene.add.text(
+      window.innerWidth / 2 + 120,
+      window.innerHeight / 2 - 80,
+      'X',
+      {
+        font: '20px Arial',
+        fill: '#ffffff',
+      }
+    )
+      .setInteractive()
+      .setScrollFactor(0) // 화면 고정
+      .setOrigin(0.5) // 중심 기준으로 배치
+      .on('pointerdown', () => {
+        menuBackground.destroy();
+        closeButton.destroy();
+        volumeText.destroy();
+        decreaseButton.destroy();
+        increaseButton.destroy();
+      });
+  
+    // 볼륨 텍스트
+    volumeText = scene.add.text(
+      window.innerWidth / 2,
+      window.innerHeight / 2 - 20,
+      `Volume: ${Math.round(bgMusic.volume * 100)}`,
+      {
+        font: '20px Arial',
+        fill: '#ffffff',
+      }
+    )
+      .setScrollFactor(0) // 화면 고정
+      .setOrigin(0.5); // 중심 기준으로 배치
+  
+    // 볼륨 감소 버튼
+    const decreaseButton = scene.add.text(
+      window.innerWidth / 2 - 50,
+      window.innerHeight / 2 + 20,
+      '-',
+      {
+        font: '30px Arial',
+        fill: '#ffffff',
+      }
+    )
+      .setInteractive()
+      .setScrollFactor(0) // 화면 고정
+      .setOrigin(0.5) // 중심 기준으로 배치
+      .on('pointerdown', () => {
+        if (bgMusic.volume > 0) {
+          bgMusic.setVolume(bgMusic.volume - 0.1);
+          volumeText.setText(`Volume: ${Math.round(bgMusic.volume * 100)}`);
+        }
+      });
+  
+    // 볼륨 증가 버튼
+    const increaseButton = scene.add.text(
+      window.innerWidth / 2 + 50,
+      window.innerHeight / 2 + 20,
+      '+',
+      {
+        font: '30px Arial',
+        fill: '#ffffff',
+      }
+    )
+      .setInteractive()
+      .setScrollFactor(0) // 화면 고정
+      .setOrigin(0.5) // 중심 기준으로 배치
+      .on('pointerdown', () => {
+        if (bgMusic.volume < 1) {
+          bgMusic.setVolume(bgMusic.volume + 0.1);
+          volumeText.setText(`Volume: ${Math.round(bgMusic.volume * 100)}`);
+        }
+      });
   }
   
   function update() {
