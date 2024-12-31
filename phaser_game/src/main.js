@@ -26,6 +26,7 @@ const config = {
   let bgMusic; // 전역 변수로 선언
   let volumeBar; // 볼륨 바
   let volumeBarBackground; // 볼륨 바 배경
+  let isSettingsMenuOpen = false; // 설정 메뉴 상태 플래그
 
   function preload() {
 
@@ -75,7 +76,9 @@ const config = {
     // 클릭 이벤트
     settingsButton.on('pointerdown', () => {
         console.log('Settings button clicked');
-        openSettingsMenu(this); // 설정 메뉴 열기
+        if (!isSettingsMenuOpen) {
+            openSettingsMenu(this); // 설정 메뉴 열기
+        }
     });
 
     // 배경 음악 재생
@@ -140,6 +143,9 @@ const config = {
   }
   
   function openSettingsMenu(scene) {
+    // 설정 메뉴가 열려 있음을 표시
+    isSettingsMenuOpen = true;
+
     // 설정 메뉴 배경
     const menuBackground = scene.add.rectangle(
       window.innerWidth / 2,
@@ -171,6 +177,7 @@ const config = {
         volumeText.destroy();
         decreaseButton.destroy();
         increaseButton.destroy();
+        isSettingsMenuOpen = false; // 설정 메뉴 닫힘 상태로 설정
       });
   
     // 볼륨 텍스트
@@ -185,7 +192,9 @@ const config = {
     )
       .setScrollFactor(0) // 화면 고정
       .setOrigin(0.5); // 중심 기준으로 배치
-  
+      
+    volumeText.setText(`Volume: ${Math.round(bgMusic.volume * 100)}`);
+    
     // 볼륨 감소 버튼
     const decreaseButton = scene.add.text(
       window.innerWidth / 2 - 50,
@@ -202,7 +211,7 @@ const config = {
       .on('pointerdown', () => {
         if (bgMusic.volume > 0) {
           bgMusic.setVolume(bgMusic.volume - 0.1);
-          volumeText.setText(`Volume: ${Math.round(bgMusic.volume * 100)}`);
+          updateVolumeDisplay(); // UI 업데이트
         }
       });
   
@@ -220,13 +229,21 @@ const config = {
       .setScrollFactor(0) // 화면 고정
       .setOrigin(0.5) // 중심 기준으로 배치
       .on('pointerdown', () => {
+        console.log("current volume :: " + bgMusic.volume)
         if (bgMusic.volume < 1) {
           bgMusic.setVolume(bgMusic.volume + 0.1);
-          volumeText.setText(`Volume: ${Math.round(bgMusic.volume * 100)}`);
+          console.log(`Increased volume to: ${bgMusic.volume}`); // 디버깅 메시지
+          updateVolumeDisplay(); // UI 업데이트
         }
       });
   }
   
+  // 볼륨 텍스트 업데이트 함수
+  function updateVolumeDisplay() {
+    console.log(`Updating volume display. Current volume: ${bgMusic.volume}`);
+    volumeText.setText(`Volume: ${Math.round(bgMusic.volume * 100)}`);
+  }
+
   function update() {
     // 속도 초기화
     player.setVelocity(0);
