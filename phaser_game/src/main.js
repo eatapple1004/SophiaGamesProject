@@ -2,6 +2,7 @@ const config = {
     type: Phaser.AUTO,
     width: window.innerWidth,
     height: window.innerHeight,
+    backgroundColor: 0x000000, // 투명 배경
     scale: {
       mode: Phaser.Scale.RESIZE, // 창 크기 변경 시 자동 조정
       autoCenter: Phaser.Scale.CENTER_BOTH, // 화면 중앙 정렬
