@@ -209,10 +209,11 @@ const config = {
       .setScrollFactor(0) // 화면 고정
       .setOrigin(0.5) // 중심 기준으로 배치
       .on('pointerdown', () => {
-        if (bgMusic.volume > 0) {
+        if (bgMusic.volume > 0.01) {
           bgMusic.setVolume(bgMusic.volume - 0.1);
-          updateVolumeDisplay(); // UI 업데이트
+          updateVolumeDisplay(bgMusic.volume-0.1); // UI 업데이트
         }
+        
       });
   
     // 볼륨 증가 버튼
@@ -229,19 +230,27 @@ const config = {
       .setScrollFactor(0) // 화면 고정
       .setOrigin(0.5) // 중심 기준으로 배치
       .on('pointerdown', () => {
-        console.log("current volume :: " + bgMusic.volume)
-        if (bgMusic.volume < 1) {
-          bgMusic.setVolume(bgMusic.volume + 0.1);
-          console.log(`Increased volume to: ${bgMusic.volume}`); // 디버깅 메시지
-          updateVolumeDisplay(); // UI 업데이트
+        const currentVolume = bgMusic.volume; // 현재 볼륨 가져오기
+        console.log("Current volume before increase:", currentVolume);
+    
+        if (currentVolume < 1) {
+          bgMusic.setVolume(Math.min(currentVolume + 0.1, 1)); // 0.1 단위로 증가
+          console.log("Volume set to:", bgMusic.volume+0.1);
+    
+          updateVolumeDisplay(bgMusic.volume+0.1); // UI 업데이트
         }
       });
+    
+
+     
   }
   
   // 볼륨 텍스트 업데이트 함수
-  function updateVolumeDisplay() {
-    console.log(`Updating volume display. Current volume: ${bgMusic.volume}`);
-    volumeText.setText(`Volume: ${Math.round(bgMusic.volume * 100)}`);
+  function updateVolumeDisplay(updatedVolume) {
+    const volume = Math.round(updatedVolume * 100); // 볼륨 값 (0~100)
+    console.log(`Updating volume display. Current volume: ${volume}`);
+    volumeText.setText(`Volume: ${volume}`);
+
   }
 
   function update() {
