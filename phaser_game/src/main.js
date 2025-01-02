@@ -101,6 +101,65 @@ function create() {
   
 }
 
+function update() {
+  // 속도 초기화
+  player.setVelocity(0);
+
+  // 대각선 속도 조정을 위해 초기 속도 설정
+  let velocityX = 0;
+  let velocityY = 0;
+
+  // 키 입력에 따라 이동 방향 설정
+  if (cursors.left.isDown)  velocityX = -200;  // 왼쪽 이동
+  if (cursors.right.isDown) velocityX = 200;  // 오른쪽으로 이동
+  if (cursors.up.isDown)    velocityY = -200; // 위로 이동
+  if (cursors.down.isDown)  velocityY = 200; // 아래로 이동
+
+  // 최종 속도 설정
+  player.setVelocity(velocityX, velocityY);
+
+  // 애니메이션 실행
+  if (velocityX < 0) {
+    // 왼쪽으로 이동 (왼쪽 또는 대각선 왼쪽)
+    player.anims.play('walk-left', true);
+    currentDirection = 'left';
+  } else if (velocityX > 0) {
+    // 오른쪽으로 이동 (오른쪽 또는 대각선 오른쪽)
+    player.anims.play('walk-right', true);
+    currentDirection = 'right';
+  }
+
+  if (velocityY < 0 && velocityX === 0) {
+    // 위로 이동 (대각선 제외)
+    player.anims.play('walk-up', true);
+    currentDirection = 'up';
+  } else if (velocityY > 0 && velocityX === 0) {
+    // 아래로 이동 (대각선 제외)
+    player.anims.play('walk-down', true);
+    currentDirection = 'down';
+  }
+
+  // 키 입력이 없을 때 애니메이션 정지 및 기본 정지 프레임 설정
+  if (velocityX === 0 && velocityY === 0) {
+    player.anims.stop();
+    switch (currentDirection) {
+      case 'left':
+        player.setFrame(9); // 왼쪽 정지 프레임
+        break;
+      case 'right':
+        player.setFrame(6); // 오른쪽 정지 프레임
+        break;
+      case 'up':
+        player.setFrame(3); // 위쪽 정지 프레임
+        break;
+      case 'down':
+        player.setFrame(0); // 아래쪽 정지 프레임
+        break;
+    }
+  }
+}
+  
+
 function setupFullscreen(scene) {
   // Full Screen 버튼 생성
   const fullscreenButton = scene.add.text(10, 10, '전체 화면', {
@@ -161,6 +220,12 @@ function createAnimations(scene) {
   });
 }
 
+// 볼륨 텍스트 업데이트 함수
+function updateVolumeDisplay(updatedVolume) {
+  const volume = Math.round(updatedVolume * 100); // 볼륨 값 (0~100)
+  console.log(`Updating volume display. Current volume: ${volume}`);
+  volumeText.setText(`Volume: ${volume}`);
+}
 
 function openSettingsMenu(scene) {
   // 설정 메뉴가 열려 있음을 표시
@@ -261,71 +326,5 @@ function openSettingsMenu(scene) {
   });
 
 }
-  
-// 볼륨 텍스트 업데이트 함수
-function updateVolumeDisplay(updatedVolume) {
-  const volume = Math.round(updatedVolume * 100); // 볼륨 값 (0~100)
-  console.log(`Updating volume display. Current volume: ${volume}`);
-  volumeText.setText(`Volume: ${volume}`);
-}
-
-function update() {
-  // 속도 초기화
-  player.setVelocity(0);
-
-  // 대각선 속도 조정을 위해 초기 속도 설정
-  let velocityX = 0;
-  let velocityY = 0;
-
-  // 키 입력에 따라 이동 방향 설정
-  if (cursors.left.isDown)  velocityX = -200;  // 왼쪽 이동
-  if (cursors.right.isDown) velocityX = 200;  // 오른쪽으로 이동
-  if (cursors.up.isDown)    velocityY = -200; // 위로 이동
-  if (cursors.down.isDown)  velocityY = 200; // 아래로 이동
-
-  // 최종 속도 설정
-  player.setVelocity(velocityX, velocityY);
-
-  // 애니메이션 실행
-  if (velocityX < 0) {
-    // 왼쪽으로 이동 (왼쪽 또는 대각선 왼쪽)
-    player.anims.play('walk-left', true);
-    currentDirection = 'left';
-  } else if (velocityX > 0) {
-    // 오른쪽으로 이동 (오른쪽 또는 대각선 오른쪽)
-    player.anims.play('walk-right', true);
-    currentDirection = 'right';
-  }
-
-  if (velocityY < 0 && velocityX === 0) {
-    // 위로 이동 (대각선 제외)
-    player.anims.play('walk-up', true);
-    currentDirection = 'up';
-  } else if (velocityY > 0 && velocityX === 0) {
-    // 아래로 이동 (대각선 제외)
-    player.anims.play('walk-down', true);
-    currentDirection = 'down';
-  }
-
-  // 키 입력이 없을 때 애니메이션 정지 및 기본 정지 프레임 설정
-  if (velocityX === 0 && velocityY === 0) {
-    player.anims.stop();
-    switch (currentDirection) {
-      case 'left':
-        player.setFrame(9); // 왼쪽 정지 프레임
-        break;
-      case 'right':
-        player.setFrame(6); // 오른쪽 정지 프레임
-        break;
-      case 'up':
-        player.setFrame(3); // 위쪽 정지 프레임
-        break;
-      case 'down':
-        player.setFrame(0); // 아래쪽 정지 프레임
-        break;
-    }
-  }
-}
-  
   new Phaser.Game(config);
   
