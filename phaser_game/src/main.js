@@ -48,11 +48,11 @@ function create() {
   const mapHeight = window.innerHeight*2; // 맵의 높이
 
   // 배경 설정
-  const background = this.add.tileSprite(0, 0, mapWidth, mapHeight, 'background').setOrigin(0, 0);
+  const background = this.add.tileSprite(0, 0, 4800, 3200, 'background').setOrigin(0, 0);
 
 
   //월드 경계 확장
-  this.physics.world.setBounds(0, 0, mapWidth, mapHeight);
+  this.physics.world.setBounds(0, 0, background.width, background.height);
   // 플레이어 설정
   const centerX = mapWidth / 2; // 맵 중앙 X 좌표
   const centerY = mapHeight / 2; // 맵 중앙 Y 좌표
@@ -81,6 +81,49 @@ function create() {
     if (!isSettingsMenuOpen) {
       openSettingsMenu(this); // 설정 메뉴 열기
     }
+  });
+
+  // 모바일 입력 추가 (터치 좌표 지속 업데이트)
+  let currentTouch = { x: null, y: null };
+  let touchInterval;
+
+  this.input.on('pointerdown', (pointer) => {
+    currentTouch.x = pointer.x;
+    currentTouch.y = pointer.y;
+
+    // 터치 위치에 따라 플레이어 이동
+    touchInterval = setInterval(() => {
+      if (currentTouch.x < player.x) {
+        player.setVelocityX(-200);
+        player.anims.play('walk-left', true);
+        currentDirection = 'left';
+      } else if (currentTouch.x > player.x) {
+        player.setVelocityX(200);
+        player.anims.play('walk-right', true);
+        currentDirection = 'right';
+      }
+      if (currentTouch.y < player.y) {
+        player.setVelocityY(-200);
+        player.anims.play('walk-up', true);
+        currentDirection = 'up';
+      } else if (currentTouch.y > player.y) {
+        player.setVelocityY(200);
+        player.anims.play('walk-down', true);
+        currentDirection = 'down';
+      }
+    }, 50); // 일정 간격으로 업데이트
+  });
+
+  this.input.on('pointermove', (pointer) => {
+    currentTouch.x = pointer.x;
+    currentTouch.y = pointer.y;
+  });
+
+  this.input.on('pointerup', () => {
+    clearInterval(touchInterval); // 터치가 끝나면 반복 중지
+    player.setVelocity(0);
+    player.anims.stop();
+    currentTouch = { x: null, y: null }; // 터치 좌표 초기화
   });
 
   // 배경 음악 재생
