@@ -93,30 +93,43 @@ function create() {
   // 키보드 화살표 키 입력 추가
   cursors = this.input.keyboard.createCursorKeys();
 
-  // Full Screen 버튼 생성
-  const fullscreenButton = this.add.text(10, 10, '전체 화면', { font: '20px Arial', fill: '#ffffff' })
-  .setInteractive()
-  .on('pointerdown', () => {
-    if (this.scale.isFullscreen) {
-    this.scale.stopFullscreen(); // 전체 화면 종료
-    } else {
-    this.scale.startFullscreen(); // 전체 화면 시작
-    }
-  }).setScrollFactor(0);;
-
-  // 전체 화면 상태 감지
-  this.scale.on('enterfullscreen', () => {
-    fullscreenButton.setVisible(false); // 전체 화면일 때 버튼 숨김
-  });
-
-  this.scale.on('leavefullscreen', () => {
-    fullscreenButton.setVisible(true); // 전체 화면 종료 시 버튼 표시
-  });
+  // 전체 화면 기능 호출
+  setupFullscreen(this);
 
   // 애니메이션 생성 호출
   createAnimations(this);
   
 }
+
+function setupFullscreen(scene) {
+  // Full Screen 버튼 생성
+  const fullscreenButton = scene.add.text(10, 10, '전체 화면', {
+    font: '20px Arial',
+    fill: '#ffffff',
+  })
+    .setInteractive()
+    .setScrollFactor(0) // 화면 고정
+    .setOrigin(0);
+
+  // 전체 화면 버튼 클릭 이벤트
+  fullscreenButton.on('pointerdown', () => {
+    if (scene.scale.isFullscreen) {
+      scene.scale.stopFullscreen(); // 전체 화면 종료
+    } else {
+      scene.scale.startFullscreen(); // 전체 화면 시작
+    }
+  });
+
+  // 전체 화면 상태 변경 이벤트
+  scene.scale.on('enterfullscreen', () => {
+    fullscreenButton.setVisible(false); // 전체 화면일 때 버튼 숨김
+  });
+
+  scene.scale.on('leavefullscreen', () => {
+    fullscreenButton.setVisible(true); // 전체 화면 종료 시 버튼 표시
+  });
+}
+
 
 function createAnimations(scene) {
   scene.anims.create({
