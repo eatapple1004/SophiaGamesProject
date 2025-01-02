@@ -37,9 +37,9 @@ function preload() {
   // 배경 이미지
   this.load.image('background', '../assets/images/background.jpg'); 
   this.load.spritesheet('player', '../assets/images/player.png', {
-  frameWidth: 32, // 각 프레임의 너비
-  frameHeight: 48, // 각 프레임의 높이
-});
+    frameWidth: 32, // 각 프레임의 너비
+    frameHeight: 48, // 각 프레임의 높이
+  });
 }
   
 function create() {
@@ -113,37 +113,42 @@ function create() {
     fullscreenButton.setVisible(true); // 전체 화면 종료 시 버튼 표시
   });
 
+  // 애니메이션 생성 호출
+  createAnimations(this);
+  
+}
 
-  // 애니메이션 생성
-  this.anims.create({
+function createAnimations(scene) {
+  scene.anims.create({
     key: 'walk-left', // 왼쪽 걷기
-    frames: this.anims.generateFrameNumbers('player', { start: 9, end: 11 }),
+    frames: scene.anims.generateFrameNumbers('player', { start: 9, end: 11 }),
     frameRate: 10,
     repeat: -1,
   });
 
-  this.anims.create({
+  scene.anims.create({
     key: 'walk-right', // 오른쪽 걷기
-    frames: this.anims.generateFrameNumbers('player', { start: 6, end: 8 }),
+    frames: scene.anims.generateFrameNumbers('player', { start: 6, end: 8 }),
     frameRate: 10,
     repeat: -1,
   });
 
-  this.anims.create({
+  scene.anims.create({
     key: 'walk-up', // 위로 걷기
-    frames: this.anims.generateFrameNumbers('player', { start: 3, end: 5 }),
+    frames: scene.anims.generateFrameNumbers('player', { start: 3, end: 5 }),
     frameRate: 10,
     repeat: -1,
   });
 
-  this.anims.create({
+  scene.anims.create({
     key: 'walk-down', // 아래로 걷기
-    frames: this.anims.generateFrameNumbers('player', { start: 0, end: 2 }),
+    frames: scene.anims.generateFrameNumbers('player', { start: 0, end: 2 }),
     frameRate: 10,
     repeat: -1,
   });
 }
-  
+
+
 function openSettingsMenu(scene) {
   // 설정 메뉴가 열려 있음을 표시
   isSettingsMenuOpen = true;
