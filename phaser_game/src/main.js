@@ -58,12 +58,12 @@ function create() {
   const centerY = mapHeight / 2; // 맵 중앙 Y 좌표
   player = this.physics.add.sprite(centerX, centerY, 'player', 0); // 맵 중앙에서 시작
   player.setScale(2); // 크기 확대
-  player.setCollideWorldBounds(true); // 경계 제한
+  player.setCollideWorldBounds(false); // 경계 제한
 
 
   // 카메라 설정
   this.cameras.main.startFollow(player); // 플레이어를 따라다니는 카메라
-  this.cameras.main.setBounds(0, 0, mapWidth, mapHeight); // 카메라가 이동할 수 있는 맵 경계
+  this.cameras.main.setBounds(0, 0, 4800, 3200); // 카메라가 이동할 수 있는 맵 경계
 
   // 설정 텍스트 버튼 추가
   const settingsButton = this.add.text(window.innerWidth - 150, 10, '⚙ Settings', {
@@ -83,48 +83,6 @@ function create() {
     }
   });
 
-  // 모바일 입력 추가 (터치 좌표 지속 업데이트)
-  let currentTouch = { x: null, y: null };
-  let touchInterval;
-
-  this.input.on('pointerdown', (pointer) => {
-    currentTouch.x = pointer.x;
-    currentTouch.y = pointer.y;
-
-    // 터치 위치에 따라 플레이어 이동
-    touchInterval = setInterval(() => {
-      if (currentTouch.x < player.x) {
-        player.setVelocityX(-200);
-        player.anims.play('walk-left', true);
-        currentDirection = 'left';
-      } else if (currentTouch.x > player.x) {
-        player.setVelocityX(200);
-        player.anims.play('walk-right', true);
-        currentDirection = 'right';
-      }
-      if (currentTouch.y < player.y) {
-        player.setVelocityY(-200);
-        player.anims.play('walk-up', true);
-        currentDirection = 'up';
-      } else if (currentTouch.y > player.y) {
-        player.setVelocityY(200);
-        player.anims.play('walk-down', true);
-        currentDirection = 'down';
-      }
-    }, 50); // 일정 간격으로 업데이트
-  });
-
-  this.input.on('pointermove', (pointer) => {
-    currentTouch.x = pointer.x;
-    currentTouch.y = pointer.y;
-  });
-
-  this.input.on('pointerup', () => {
-    clearInterval(touchInterval); // 터치가 끝나면 반복 중지
-    player.setVelocity(0);
-    player.anims.stop();
-    currentTouch = { x: null, y: null }; // 터치 좌표 초기화
-  });
 
   // 배경 음악 재생
   bgMusic = this.sound.add('bgMusic', {
@@ -141,7 +99,9 @@ function create() {
 
   // 애니메이션 생성 호출
   createAnimations(this);
-  
+
+
+  setupMobileControls(this);
 }
 
 function update() {
@@ -201,7 +161,78 @@ function update() {
     }
   }
 }
-  
+
+function setupMobileControls(scene) {
+  let currentTouch = { x: null, y: null };
+  let touchInterval;
+
+  scene.input.on('pointerdown', (pointer) => {
+    currentTouch.x = pointer.x;
+    currentTouch.y = pointer.y;
+
+    // 터치 위치에 따라 플레이어 이동
+    touchInterval = setInterval(() => {
+      let velocityX = 0;
+      let velocityY = 0;
+
+      if (currentTouch.x < player.x - 10) {
+        velocityX = -200;
+        currentDirection = 'left';
+      } else if (currentTouch.x > player.x + 10) {
+        velocityX = 200;
+        currentDirection = 'right';
+      }
+
+      if (currentTouch.y < player.y - 10) {
+        velocityY = -200;
+        currentDirection = 'up';
+      } else if (currentTouch.y > player.y + 10) {
+        velocityY = 200;
+        currentDirection = 'down';
+      }
+
+      player.setVelocity(velocityX, velocityY);
+
+      // 대각선 방향 애니메이션 처리
+      if (velocityX !== 0 && velocityY !== 0) {
+        if (velocityX > 0 && velocityY > 0) {
+          player.anims.play('walk-down', true);
+        } else if (velocityX > 0 && velocityY < 0) {
+          player.anims.play('walk-right', true);
+        } else if (velocityX < 0 && velocityY > 0) {
+          player.anims.play('walk-left', true);
+        } else if (velocityX < 0 && velocityY < 0) {
+          player.anims.play('walk-up', true);
+        }
+      } else {
+        // 단일 방향 애니메이션
+        if (velocityX < 0) {
+          player.anims.play('walk-left', true);
+        } else if (velocityX > 0) {
+          player.anims.play('walk-right', true);
+        }
+        if (velocityY < 0) {
+          player.anims.play('walk-up', true);
+        } else if (velocityY > 0) {
+          player.anims.play('walk-down', true);
+        }
+      }
+    }, 50); // 일정 간격으로 업데이트
+  });
+
+  scene.input.on('pointermove', (pointer) => {
+    currentTouch.x = pointer.x;
+    currentTouch.y = pointer.y;
+  });
+
+  scene.input.on('pointerup', () => {
+    clearInterval(touchInterval); // 터치가 끝나면 반복 중지
+    player.setVelocity(0);
+    player.anims.stop();
+    currentTouch = { x: null, y: null }; // 터치 좌표 초기화
+  });
+}
+
 
 function setupFullscreen(scene) {
   // Full Screen 버튼 생성
